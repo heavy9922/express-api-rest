@@ -1,5 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors');
 const routerApi = require('./routes');
 
 const { logErrors, errorHandler,boomErrorHandler } = require('./middlewares/error.handler');
@@ -10,6 +11,17 @@ const port = 4000;
 app.use(morgan('dev'));
 
 app.use(express.json());
+const whiteList = ['http://127.0.0.1:5500']
+const options = {
+  origin:(origin,callback)=>{
+    if(whiteList.includes(origin)){
+      callback(null,true)
+    }else{
+      callback(new Error('Not allowed'))
+    }
+  }
+}
+app.use(cors(options));
 
 app.get('/', (req, res) => {
   res.send('Hola my server Express');
